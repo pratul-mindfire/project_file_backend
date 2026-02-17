@@ -1,41 +1,45 @@
-const Project = require("../models/Project");
-const fs = require("fs");
-const path = require("path");
+const projectService = require("../services/project.service");
 
-exports.createProject = async (req, res) => {
-  const project = await Project.create(req.body);
-  res.json(project);
+exports.createProject = async (req, res, next) => {
+  try {
+    const project = await projectService.createProject(req.body);
+    res.status(201).json(project);
+  } catch (err) {
+    next(err);
+  }
 };
 
-exports.getAllProject = async (req, res) => {
-
-  const project = await Project.find();
-   console.log(project)
-
-  res.json( project);
+exports.getProject = async (req, res, next) => {
+  try {
+    const project = await projectService.getProject(req.params.projectId);
+    res.json(project);
+  } catch (err) {
+    next(err);
+  }
 };
-exports.getProject = async (req, res) => {
-  const { id } = req.params;
-
-  const project = await Project.findById(id);
-  if (!project) return res.status(404).json({ error: "Project not found" });
-
-
-  res.json({ ...project.toObject(), });
-};
-
-exports.updateProject = async (req, res) => {
-  await Project.findByIdAndUpdate(req.params.id, req.body);
-  res.json({ message: "Project updated" });
+exports.getAllProject = async (req, res, next) => {
+  try {
+    const project = await projectService.getAllProject();
+    res.json(project);
+  } catch (err) {
+    next(err);
+  }
 };
 
-exports.deleteProject = async (req, res) => {
-  const { id } = req.params;
+exports.updateProject = async (req, res, next) => {
+  try {
+    await projectService.updateProject(req.params.projectId, req.body);
+    res.json({ message: "Project updated successfully" });
+  } catch (err) {
+    next(err);
+  }
+};
 
-  await Project.findByIdAndDelete(id);
-
-  const dir = path.join("storage", id);
-  if (fs.existsSync(dir)) fs.rmSync(dir, { recursive: true, force: true });
-
-  res.json({ message: "Project deleted" });
+exports.deleteProject = async (req, res, next) => {
+  try {
+    await projectService.deleteProject(req.params.projectId);
+    res.json({ message: "Project and related data deleted" });
+  } catch (err) {
+    next(err);
+  }
 };

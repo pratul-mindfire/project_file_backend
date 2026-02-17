@@ -1,42 +1,39 @@
 const express = require("express");
 const router = express.Router();
+const upload = require("../utils/file.utils");
+const validateObjectId = require("../middlewares/validateObjectId");
 
-const {
-  createProject,
-  getAllProject,
-  getProject,
-  updateProject,
-  deleteProject
-} = require("../controllers/project.controller");
+const projectController = require("../controllers/project.controller");
+const fileController = require("../controllers/file.controller");
+const jobController = require("../controllers/job.controller");
 
-/**
- * @route   POST /api/projects
- * @desc    Create new project
- */
-router.post("/", createProject);
+/* Project APIs */
+router.post("/projects", projectController.createProject);
+router.get("/projects/:projectId", validateObjectId, projectController.getProject);
+router.get("/projects", projectController.getProject);
+router.put("/projects/:projectId", validateObjectId, projectController.updateProject);
+router.delete("/projects/:projectId", validateObjectId, projectController.deleteProject);
 
-/**
- * @route   GET /api/projects
- * @desc    Get All project details (with file & job counts)
- */
-router.get("/", getAllProject);
+/* File APIs */
+router.post(
+  "/projects/:projectId/files",
+  validateObjectId,
+  upload.array("files"),
+  fileController.uploadFiles
+);
 
-/**
- * @route   GET /api/projects/:id
- * @desc    Get project details (with file & job counts)
- */
-router.get("/:id", getProject);
+router.get(
+  "/projects/:projectId/files",
+  validateObjectId,
+  fileController.listFiles
+);
 
-/**
- * @route   PUT /api/projects/:id
- * @desc    Update project
- */
-router.put("/:id", updateProject);
+router.delete(
+  "/projects/:projectId/files/:fileId",
+  validateObjectId,
+  fileController.deleteFile
+);
 
-/**
- * @route   DELETE /api/projects/:id
- * @desc    Delete project (cascade delete files & jobs)
- */
-router.delete("/:id", deleteProject);
+
 
 module.exports = router;

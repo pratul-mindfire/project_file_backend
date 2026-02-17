@@ -8,5 +8,6 @@ const schema = new mongoose.Schema(
   },
   { timestamps: true }
 );
+schema.index({ createdAt: -1 });
 
 module.exports = mongoose.model("Project", schema);
