@@ -34,6 +34,23 @@ router.delete(
   fileController.deleteFile
 );
 
+router.get(
+  "/projects/:projectId/files/:fileId/download",
+  validateObjectId,
+  fileController.downloadFile
+);
 
+/* Job APIs */
+router.post(
+  "/projects/:projectId/jobs/zip",
+  validateObjectId,
+  jobController.createZipJob
+);
+
+router.get(
+  "/projects/:projectId/jobs/:jobId",
+  validateObjectId,
+  jobController.getJobStatus
+);
 
 module.exports = router;
