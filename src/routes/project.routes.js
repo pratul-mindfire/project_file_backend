@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
-const upload = require("../utils/file.utils");
 const validateObjectId = require("../middlewares/validateObjectId");
+const upload = require("../utils/file.utils");
 
 const projectController = require("../controllers/project.controller");
 const fileController = require("../controllers/file.controller");
@@ -10,7 +10,7 @@ const jobController = require("../controllers/job.controller");
 /* Project APIs */
 router.post("/projects", projectController.createProject);
 router.get("/projects/:projectId", validateObjectId, projectController.getProject);
-router.get("/projects", projectController.getProject);
+router.get("/projects", projectController.getAllProject);
 router.put("/projects/:projectId", validateObjectId, projectController.updateProject);
 router.delete("/projects/:projectId", validateObjectId, projectController.deleteProject);
 
