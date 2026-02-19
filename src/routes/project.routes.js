@@ -10,7 +10,7 @@ const jobController = require("../controllers/job.controller");
 /* Project APIs */
 router.post("/projects", projectController.createProject);
 router.get("/projects/:projectId", validateObjectId, projectController.getProject);
-router.get("/projects", projectController.getProject);
+router.get("/projects", projectController.getAllProject);
 router.put("/projects/:projectId", validateObjectId, projectController.updateProject);
 router.delete("/projects/:projectId", validateObjectId, projectController.deleteProject);
 
