@@ -11,3 +11,4 @@ app.use(errorMiddleware);
 
 // app.listen(process.env.PORT, () =>
 //    console.log(`Server running on port ${PORT}`))
+module.exports = app;

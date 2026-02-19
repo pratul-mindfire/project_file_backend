@@ -1,7 +1,8 @@
 const { parentPort, workerData } = require("worker_threads");
 const mongoose = require("mongoose");
 const archiver = require("archiver");
-const fs = require("fs");
+const axios = require("axios");
+const { uploadBufferToCloudinary } = require("../utils/file.upload");
 
 const Job = require("../models/Job");
 const File = require("../models/File");
@@ -25,17 +26,16 @@ const jobStatus = require("../constants/jobStatus");
     const job = await Job.findById(jobId);
     const files = await File.find({ _id: { $in: job.fileIds } });
     const outputFileName = `${jobId}_files.zip`;
-    const outputPath = `uploads/${jobId}.zip`;
-    const output = fs.createWriteStream(outputPath);
-    const archive = archiver("zip");
-
-    archive.pipe(output);
+    const archive = archiver("zip", { zlib: { level: 9 } });
+    const chunks = [];
+    archive.on("data", chunk => chunks.push(chunk));
 
     let processed = 0;
     for (const file of files) {
-      archive.file(file.path, { name: file.name });
+      // Download file from Cloudinary
+      const response = await axios.get(file.path, { responseType: "arraybuffer" });
+      archive.append(response.data, { name: file.name });
       processed++;
-
       await Job.updateOne(
         { _id: jobId },
         { progress: Math.floor((processed / files.length) * 100) }
@@ -43,13 +43,19 @@ const jobStatus = require("../constants/jobStatus");
     }
     await archive.finalize();
 
+    // Combine chunks into a single buffer
+    const zipBuffer = Buffer.concat(chunks);
+    // Upload zip buffer to Cloudinary
+    const result = await uploadBufferToCloudinary(zipBuffer, outputFileName, "application/zip");
+
     const outputFile = await File.create({
       projectId: job.projectId,
       name: outputFileName,
-      path: outputPath,
-      size: fs.statSync(outputPath).size,
+      path: result.secure_url,
+      size: zipBuffer.length,
       mimeType: "application/zip",
-      isOutput: true
+      isOutput: true,
+      resource_type: result.resource_type
     });
     await Job.updateOne(
       { _id: jobId },
