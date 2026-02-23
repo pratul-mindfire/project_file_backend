@@ -1,11 +1,11 @@
 // ESLint v9+ config migration
 module.exports = [
   {
-    ignores: ['node_modules/', 'build/', 'dist/', 'uploads/'],
-    files: ['**/*.js'],
+    ignores: ["node_modules/", "build/", "dist/", "uploads/"],
+    files: ["**/*.js"],
     languageOptions: {
       ecmaVersion: 2021,
-      sourceType: 'module',
+      sourceType: "module",
       globals: {
         window: false,
         document: false,
@@ -15,8 +15,8 @@ module.exports = [
       },
     },
     rules: {
-      'no-unused-vars': 'warn',
-      'no-console': 'off',
+      "no-unused-vars": "warn",
+      "no-console": "off",
     },
   },
 ];

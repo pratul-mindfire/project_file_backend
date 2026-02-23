@@ -4,7 +4,6 @@ const Job = require("../models/Job");
 const File = require("../models/File");
 
 exports.createZipJob = async (projectId, fileIds) => {
-
   const files = await File.find({ _id: { $in: fileIds }, projectId });
 
   if (files.length !== fileIds.length) {
@@ -14,11 +13,11 @@ exports.createZipJob = async (projectId, fileIds) => {
   const job = await Job.create({
     projectId,
     type: "ZIP_COMPRESSION",
-    fileIds
+    fileIds,
   });
 
   new Worker(path.resolve(__dirname, "../workers/zip.worker.js"), {
-    workerData: { jobId: job._id.toString() }
+    workerData: { jobId: job._id.toString() },
   });
 
   return job;

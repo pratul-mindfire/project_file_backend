@@ -3,5 +3,5 @@ require("dotenv").config();
 module.exports = {
   PORT: process.env.PORT || 3000,
   MONGO_URI: process.env.MONGO_URI,
-  UPLOAD_DIR: process.env.UPLOAD_DIR || "uploads"
+  UPLOAD_DIR: process.env.UPLOAD_DIR || "uploads",
 };

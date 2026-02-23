@@ -15,15 +15,13 @@ exports.getProject = async (projectId) => {
   return {
     ...project.toObject(),
     filesCount,
-    jobsCount
+    jobsCount,
   };
 };
 exports.getAllProject = async () => {
   const project = await Project.find();
   if (!project) throw new Error("Project not found");
-  return [
-    ...project,
-];
+  return [...project];
 };
 
 exports.updateProject = async (projectId, data) => {
