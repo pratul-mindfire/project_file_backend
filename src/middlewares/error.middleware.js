@@ -1,7 +1,7 @@
-module.exports = (err, req, res) => {
-  console.error(err);
-
-  res.status(400).json({
-    error: err.message || "Something went wrong",
+// eslint-disable-next-line no-unused-vars
+module.exports = (err, req, res, next) => {
+  res.status(err.status || 500).json({
+    success: false,
+    message: err.message || "Internal Server Error",
   });
 };
