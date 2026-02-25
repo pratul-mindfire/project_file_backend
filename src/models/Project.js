@@ -2,9 +2,9 @@ const mongoose = require("mongoose");
 
 const schema = new mongoose.Schema(
   {
-   // _id: Number,
+    // _id: Number,
     name: { type: String, required: true },
-    description: String
+    description: String,
   },
   { timestamps: true }
 );

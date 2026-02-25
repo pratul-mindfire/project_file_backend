@@ -22,17 +22,9 @@ router.post(
   fileController.uploadFiles
 );
 
-router.get(
-  "/projects/:projectId/files",
-  validateObjectId,
-  fileController.listFiles
-);
+router.get("/projects/:projectId/files", validateObjectId, fileController.listFiles);
 
-router.delete(
-  "/projects/:projectId/files/:fileId",
-  validateObjectId,
-  fileController.deleteFile
-);
+router.delete("/projects/:projectId/files/:fileId", validateObjectId, fileController.deleteFile);
 
 router.get(
   "/projects/:projectId/files/:fileId/download",
@@ -41,16 +33,8 @@ router.get(
 );
 
 /* Job APIs */
-router.post(
-  "/projects/:projectId/jobs/zip",
-  validateObjectId,
-  jobController.createZipJob
-);
+router.post("/projects/:projectId/jobs/zip", validateObjectId, jobController.createZipJob);
 
-router.get(
-  "/projects/:projectId/jobs/:jobId",
-  validateObjectId,
-  jobController.getJobStatus
-);
+router.get("/projects/:projectId/jobs/:jobId", validateObjectId, jobController.getJobStatus);
 
 module.exports = router;

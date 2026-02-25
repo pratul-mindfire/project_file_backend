@@ -18,7 +18,7 @@ const jobStatus = require("../constants/jobStatus");
       { _id: jobId },
       {
         status: jobStatus.PROCESSING,
-        startedAt: new Date()
+        startedAt: new Date(),
       }
     );
 
@@ -49,7 +49,7 @@ const jobStatus = require("../constants/jobStatus");
       path: outputPath,
       size: fs.statSync(outputPath).size,
       mimeType: "application/zip",
-      isOutput: true
+      isOutput: true,
     });
     await Job.updateOne(
       { _id: jobId },
@@ -57,18 +57,17 @@ const jobStatus = require("../constants/jobStatus");
         status: jobStatus.COMPLETED,
         progress: 100,
         outputFileId: outputFile._id,
-        completedAt: new Date()
+        completedAt: new Date(),
       }
     );
 
     parentPort.postMessage("done");
-
   } catch (err) {
     await Job.updateOne(
       { _id: jobId },
       {
         status: jobStatus.FAILED,
-        error: err.message
+        error: err.message,
       }
     );
   }
