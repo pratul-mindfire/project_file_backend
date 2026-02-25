@@ -1,26 +1,28 @@
 const jobService = require("../services/job.service");
 const Job = require("../models/Job");
 
-exports.createZipJob = async (req, res, next) => {
+exports.createJob = async (req, res, next) => {
   try {
-    const job = await jobService.createZipJob(req.params.projectId, req.body.fileIds);
+    const job = await jobService.createJob(req.userId, req.params.projectId, req.body.fileIds);
 
-    res.status(201).json(job);
+    res.status(201).json({
+      success: true,
+      message: "Job created successfully",
+      data: job,
+    });
   } catch (err) {
     next(err);
   }
 };
 
-exports.getJobStatus = async (req, res, next) => {
+exports.getJob = async (req, res, next) => {
   try {
-    const job = await Job.findOne({
-      _id: req.params.jobId,
-      projectId: req.params.projectId,
+    const job = await jobService.getJob(req.userId, req.params.projectId, req.params.jobId);
+    res.status(201).json({
+      success: true,
+      message: "Job retrieved successfully",
+      data: job,
     });
-
-    if (!job) throw new Error("Job not found");
-
-    res.json(job);
   } catch (err) {
     next(err);
   }

@@ -2,7 +2,12 @@ const mongoose = require("mongoose");
 
 const schema = new mongoose.Schema(
   {
-    // _id: Number,
+    // Reference to file owner (User) - for security and filtering
+    userId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
+    },
     name: { type: String, required: true },
     description: String,
   },
