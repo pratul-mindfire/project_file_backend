@@ -2,13 +2,29 @@ const Project = require("../models/Project");
 const File = require("../models/File");
 const Job = require("../models/Job");
 
-exports.createProject = async (data) => {
-  return await Project.create(data);
+exports.createProject = async (userId, name, description) => {
+  // Create project with current user ID
+  const project = new Project({
+    name,
+    description,
+    userId: userId, // Associate project with authenticated user
+  });
+
+  await project.save();
+  return project;
 };
 
-exports.getProject = async (projectId) => {
-  const project = await Project.findById(projectId);
-  if (!project) throw new Error("Project not found");
+exports.getProject = async (userId, projectId) => {
+  //Find project and verify it belongs to current user
+  const project = await Project.findOne({
+    _id: projectId,
+    userId: userId,
+  });
+  if (!project) {
+    const error = new Error("No project found");
+    error.status = 404;
+    throw error;
+  }
 
   const filesCount = await File.countDocuments({ projectId });
   const jobsCount = await Job.countDocuments({ projectId });
@@ -18,20 +34,36 @@ exports.getProject = async (projectId) => {
     jobsCount,
   };
 };
-exports.getAllProject = async () => {
-  const project = await Project.find();
-  if (!project) throw new Error("Project not found");
-  return [...project];
+
+exports.getProjects = async (userId) => {
+  const projects = await Project.find({ userId });
+  return [...projects];
 };
 
-exports.updateProject = async (projectId, data) => {
-  const project = await Project.findByIdAndUpdate(projectId, data, { new: true });
-  if (!project) throw new Error("Project not found");
+exports.updateProject = async (userId, projectId, data) => {
+  const project = await Project.findOneAndUpdate({ _id: projectId, userId: userId }, data, {
+    returnDocument: "after",
+  });
+  if (!project) {
+    const error = new Error("No project found");
+    error.status = 404;
+    throw error;
+  }
   return project;
 };
 
-exports.deleteProject = async (projectId) => {
+exports.deleteProject = async (userId, projectId) => {
+  // Find and verify project ownership before deleting
+  const project = await Project.findOneAndDelete({
+    _id: projectId,
+    userId: userId,
+  });
+
+  if (!project) {
+    const error = new Error("No project found");
+    error.status = 404;
+    throw error;
+  }
   await File.deleteMany({ projectId });
   await Job.deleteMany({ projectId });
-  await Project.findByIdAndDelete(projectId);
 };

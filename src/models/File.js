@@ -8,6 +8,12 @@ const schema = new mongoose.Schema(
       required: true,
       index: true,
     },
+    // Reference to file owner (User) - for security and filtering
+    userId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
+    },
     name: String,
     path: String,
     mimeType: String,

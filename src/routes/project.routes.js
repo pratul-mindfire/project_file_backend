@@ -6,35 +6,35 @@ const validateObjectId = require("../middlewares/validateObjectId");
 const projectController = require("../controllers/project.controller");
 const fileController = require("../controllers/file.controller");
 const jobController = require("../controllers/job.controller");
+const authMiddleware = require("../middlewares/auth.middleware");
+
+// Apply authentication middleware to all project routes
+router.use(authMiddleware);
 
 /* Project APIs */
-router.post("/projects", projectController.createProject);
-router.get("/projects/:projectId", validateObjectId, projectController.getProject);
-router.get("/projects", projectController.getAllProject);
-router.put("/projects/:projectId", validateObjectId, projectController.updateProject);
-router.delete("/projects/:projectId", validateObjectId, projectController.deleteProject);
+router.post("/", projectController.createProject);
+router.get("/:projectId", validateObjectId, projectController.getProject);
+router.get("/", projectController.getProjects);
+router.put("/:projectId", validateObjectId, projectController.updateProject);
+router.delete("/:projectId", validateObjectId, projectController.deleteProject);
 
 /* File APIs */
 router.post(
-  "/projects/:projectId/files",
+  "/:projectId/files",
   validateObjectId,
   upload.array("files"),
   fileController.uploadFiles
 );
 
-router.get("/projects/:projectId/files", validateObjectId, fileController.listFiles);
+router.get("/:projectId/files", validateObjectId, fileController.getProjectFiles);
 
-router.delete("/projects/:projectId/files/:fileId", validateObjectId, fileController.deleteFile);
+router.delete("/:projectId/files/:fileId", validateObjectId, fileController.deleteFile);
 
-router.get(
-  "/projects/:projectId/files/:fileId/download",
-  validateObjectId,
-  fileController.downloadFile
-);
+router.get("/:projectId/files/:fileId/download", validateObjectId, fileController.downloadFile);
 
 /* Job APIs */
-router.post("/projects/:projectId/jobs/zip", validateObjectId, jobController.createZipJob);
+router.post("/:projectId/jobs/zip", validateObjectId, jobController.createJob);
 
-router.get("/projects/:projectId/jobs/:jobId", validateObjectId, jobController.getJobStatus);
+router.get("/:projectId/jobs/:jobId", validateObjectId, jobController.getJob);
 
 module.exports = router;
