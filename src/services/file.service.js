@@ -2,11 +2,10 @@ const File = require("../models/File");
 const Project = require("../models/Project");
 const fs = require("fs");
 
-exports.uploadFiles = async (userId, projectId, files) => {
+exports.uploadFiles = async (projectId, files) => {
   // Verify project ownership
   const project = await Project.findOne({
     _id: projectId,
-    userId: userId,
   });
 
   if (!project) {
@@ -19,7 +18,6 @@ exports.uploadFiles = async (userId, projectId, files) => {
     files.map((file) =>
       File.create({
         projectId,
-        userId,
         name: file.originalname,
         path: file.path,
         size: file.size,
@@ -31,17 +29,17 @@ exports.uploadFiles = async (userId, projectId, files) => {
   return savedFiles;
 };
 
-exports.getProjectFiles = async (userId, projectId) => {
+exports.getProjectFiles = async (projectId) => {
   // Fetch files owned by user in this project
   const files = await File.find({
     projectId,
-    userId: userId,
+    isOutput: false,
   });
   return files;
 };
 
-exports.deleteFile = async (userId, projectId, fileId) => {
-  const file = await File.findOne({ _id: fileId, projectId, userId });
+exports.deleteFile = async (projectId, fileId) => {
+  const file = await File.findOne({ _id: fileId, projectId });
   if (!file) {
     const error = new Error("File not found in this project");
     error.status = 404;
@@ -55,9 +53,8 @@ exports.deleteFile = async (userId, projectId, fileId) => {
   await file.deleteOne();
 };
 
-exports.downloadFile = async (userId, projectId, fileId) => {
-  const file = await File.findOne({ _id: fileId, projectId, userId, isOutput: true });
-  console.log("File found for download:", file, fileId, projectId, userId);
+exports.downloadFile = async (projectId, fileId) => {
+  const file = await File.findOne({ _id: fileId, projectId, isOutput: true });
   if (!file) {
     const error = new Error("Output file not found for this project");
     error.status = 404;

@@ -4,11 +4,6 @@ const jobSchema = new mongoose.Schema(
   {
     projectId: { type: mongoose.Schema.Types.ObjectId, ref: "Project", index: true },
     // Reference to file owner (User) - for security and filtering
-    userId: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
-      required: true,
-    },
     type: { type: String, enum: ["ZIP_COMPRESSION"] },
     status: {
       type: String,
