@@ -10,7 +10,7 @@ exports.createProject = async (req, res, next) => {
     });
   }
   try {
-    const project = await projectService.createProject(req.userId, name, description);
+    const project = await projectService.createProject(req.user.userId, name, description);
     res.status(201).json({
       success: true,
       message: "Project created successfully",
@@ -23,7 +23,7 @@ exports.createProject = async (req, res, next) => {
 
 exports.getProject = async (req, res, next) => {
   try {
-    const project = await projectService.getProject(req.userId, req.params.projectId);
+    const project = await projectService.getProject(req.user.userId, req.params.projectId);
     res.status(201).json({
       success: true,
       message: "Project retrieved successfully",
@@ -35,7 +35,7 @@ exports.getProject = async (req, res, next) => {
 };
 exports.getProjects = async (req, res, next) => {
   try {
-    const projects = await projectService.getProjects(req.userId);
+    const projects = await projectService.getProjects(req.user.userId);
     res.status(201).json({
       success: true,
       message: "Projects retrieved successfully",
@@ -48,7 +48,11 @@ exports.getProjects = async (req, res, next) => {
 
 exports.updateProject = async (req, res, next) => {
   try {
-    const project = await projectService.updateProject(req.userId, req.params.projectId, req.body);
+    const project = await projectService.updateProject(
+      req.user.userId,
+      req.params.projectId,
+      req.body
+    );
     res.status(201).json({
       success: true,
       message: "Project updated successfully",
@@ -61,7 +65,7 @@ exports.updateProject = async (req, res, next) => {
 
 exports.deleteProject = async (req, res, next) => {
   try {
-    await projectService.deleteProject(req.userId, req.params.projectId);
+    await projectService.deleteProject(req.user.userId, req.params.projectId);
     res.status(201).json({
       success: true,
       message: "Project and related data deleted successfully",

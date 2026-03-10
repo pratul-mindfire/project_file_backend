@@ -1,7 +1,6 @@
 const express = require("express");
 const router = express.Router();
 const upload = require("../utils/file.utils");
-const validateObjectId = require("../middlewares/validateObjectId");
 
 const projectController = require("../controllers/project.controller");
 const fileController = require("../controllers/file.controller");
@@ -15,11 +14,7 @@ const {
 } = require("../validators/project.validator");
 
 const { validate } = require("../middlewares/validate.middleware");
-const {
-  projectIdValidator,
-  fileIdValidator,
-  filesUploadValidator,
-} = require("../validators/file.validator");
+const { projectIdValidator, fileIdValidator } = require("../validators/file.validator");
 const { createJobValidator, jobIdValidator } = require("../validators/job.validator");
 
 // Apply authentication middleware to all project routes
@@ -36,7 +31,6 @@ router.post(
   "/:projectId/files",
   projectIdValidator,
   validate,
-  filesUploadValidator,
   upload.array("files"),
   fileController.uploadFiles
 );
