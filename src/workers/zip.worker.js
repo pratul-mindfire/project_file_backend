@@ -45,7 +45,6 @@ const jobStatus = require("../constants/jobStatus");
 
     const outputFile = await File.create({
       projectId: job.projectId,
-      userId: job.userId,
       name: outputFileName,
       path: outputPath,
       size: fs.statSync(outputPath).size,

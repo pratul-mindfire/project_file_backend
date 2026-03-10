@@ -13,23 +13,7 @@ const { registerUser, loginUser } = require("../services/auth.service");
  */
 const register = async (req, res, next) => {
   try {
-    const { name, email, password, confirmPassword } = req.body;
-
-    // Validate required fields
-    if (!name || !email || !password) {
-      return res.status(400).json({
-        success: false,
-        message: "Please provide name, email, and password",
-      });
-    }
-
-    // Verify password confirmation
-    if (password !== confirmPassword) {
-      return res.status(400).json({
-        success: false,
-        message: "Passwords do not match",
-      });
-    }
+    const { name, email, password } = req.body;
 
     // Register user via service
     const result = await registerUser(name, email, password);
@@ -53,14 +37,6 @@ const register = async (req, res, next) => {
 const login = async (req, res, next) => {
   try {
     const { email, password } = req.body;
-
-    // Validate required fields
-    if (!email || !password) {
-      return res.status(400).json({
-        success: false,
-        message: "Please provide email and password",
-      });
-    }
 
     // Login user via service
     const result = await loginUser(email, password);

@@ -11,7 +11,7 @@ exports.createProject = async (userId, name, description) => {
   });
 
   await project.save();
-  return project;
+  return { ...project.toObject(), filesCount: 0, jobsCount: 0 };
 };
 
 exports.getProject = async (userId, projectId) => {
@@ -37,7 +37,22 @@ exports.getProject = async (userId, projectId) => {
 
 exports.getProjects = async (userId) => {
   const projects = await Project.find({ userId });
-  return [...projects];
+  const projectsWithCounts = await Promise.all(
+    projects.map(async (project) => {
+      const projectId = project._id;
+
+      const filesCount = await File.countDocuments({ projectId });
+      const jobsCount = await Job.countDocuments({ projectId });
+
+      return {
+        ...project.toObject(),
+        filesCount,
+        jobsCount,
+      };
+    })
+  );
+
+  return [...projectsWithCounts];
 };
 
 exports.updateProject = async (userId, projectId, data) => {

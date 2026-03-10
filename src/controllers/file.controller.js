@@ -9,7 +9,7 @@ exports.uploadFiles = async (req, res, next) => {
     });
   }
   try {
-    const files = await fileService.uploadFiles(req.userId, req.params.projectId, req.files);
+    const files = await fileService.uploadFiles(req.params.projectId, req.files);
     res.status(201).json({
       success: true,
       message: "Files uploaded successfully",
@@ -22,7 +22,7 @@ exports.uploadFiles = async (req, res, next) => {
 
 exports.getProjectFiles = async (req, res, next) => {
   try {
-    const files = await fileService.getProjectFiles(req.userId, req.params.projectId);
+    const files = await fileService.getProjectFiles(req.params.projectId);
     res.status(201).json({
       success: true,
       message: "Files retrieved successfully",
@@ -35,7 +35,7 @@ exports.getProjectFiles = async (req, res, next) => {
 
 exports.deleteFile = async (req, res, next) => {
   try {
-    await fileService.deleteFile(req.userId, req.params.projectId, req.params.fileId);
+    await fileService.deleteFile(req.params.projectId, req.params.fileId);
     res.status(201).json({
       success: true,
       message: "File deleted successfully",
@@ -47,11 +47,7 @@ exports.deleteFile = async (req, res, next) => {
 
 exports.downloadFile = async (req, res, next) => {
   try {
-    const file = await fileService.downloadFile(
-      req.userId,
-      req.params.projectId,
-      req.params.fileId
-    );
+    const file = await fileService.downloadFile(req.params.projectId, req.params.fileId);
 
     res.setHeader("Content-Type", "application/zip");
     res.setHeader("Content-Disposition", `attachment; filename="${file.name}"`);
