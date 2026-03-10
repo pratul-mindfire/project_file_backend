@@ -1,13 +1,6 @@
 const fileService = require("../services/file.service");
 
 exports.uploadFiles = async (req, res, next) => {
-  const files = req.files;
-  if (!files || files.length === 0) {
-    return res.status(400).json({
-      success: false,
-      message: "No files provided",
-    });
-  }
   try {
     const files = await fileService.uploadFiles(req.params.projectId, req.files);
     res.status(201).json({

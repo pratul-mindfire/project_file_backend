@@ -26,7 +26,7 @@ exports.getProject = async (userId, projectId) => {
     throw error;
   }
 
-  const filesCount = await File.countDocuments({ projectId });
+  const filesCount = await File.countDocuments({ projectId, isOutput: false });
   const jobsCount = await Job.countDocuments({ projectId });
   return {
     ...project.toObject(),
@@ -41,7 +41,7 @@ exports.getProjects = async (userId) => {
     projects.map(async (project) => {
       const projectId = project._id;
 
-      const filesCount = await File.countDocuments({ projectId });
+      const filesCount = await File.countDocuments({ projectId, isOutput: false });
       const jobsCount = await Job.countDocuments({ projectId });
 
       return {
