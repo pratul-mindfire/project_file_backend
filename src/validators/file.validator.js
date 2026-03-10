@@ -17,14 +17,3 @@ exports.fileIdValidator = [
     .isMongoId()
     .withMessage("File ID must be a string"),
 ];
-
-exports.filesUploadValidator = (req, res, next) => {
-  if (!req.files || req.files.length === 0) {
-    return res.status(400).json({
-      success: false,
-      message: "No files provided",
-    });
-  }
-
-  next();
-};

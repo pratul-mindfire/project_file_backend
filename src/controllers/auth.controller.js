@@ -83,7 +83,7 @@ const logout = (req, res) => {
 const getProfile = async (req, res, next) => {
   try {
     const User = require("../models/User");
-    const user = await User.findById(req.userId);
+    const user = await User.findById(req.user.userId);
 
     if (!user) {
       return res.status(404).json({
