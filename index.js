@@ -1,3 +1,4 @@
+require("dotenv").config();
 const connectDB = require("./src/config/db");
 const { PORT } = require("./src/config/env");
 
