@@ -14,7 +14,6 @@ exports.uploadFiles = async (projectId, files) => {
     files.map(async (file) => {
       // Upload buffer to Cloudinary
       const result = await uploadBufferToCloudinary(file.buffer, file.originalname);
-      console.log("Cloudinary upload result:", result);
       return File.create({
         projectId,
         name: file.originalname,
@@ -56,7 +55,6 @@ exports.deleteFile = async (projectId, fileId) => {
 
 exports.downloadFile = async (projectId, fileId) => {
   const file = await File.findOne({ _id: fileId, projectId, isOutput: true });
-  console.log("File found for download:", file, projectId, fileId);
   if (!file) {
     const error = new Error("Output file not found for this project");
     error.status = 404;

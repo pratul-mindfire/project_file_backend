@@ -31,10 +31,8 @@ const jobStatus = require("../constants/jobStatus");
     archive.on("data", (chunk) => chunks.push(chunk));
 
     let processed = 0;
-    console.log("Files to process:", files);
     for (const file of files) {
       // Download file from Cloudinary
-      console.log("Downloading file from Cloudinary:", file.path);
       const response = await axios.get(file.path, { responseType: "arraybuffer" });
       archive.append(response.data, { name: file.name });
       processed++;
@@ -43,7 +41,6 @@ const jobStatus = require("../constants/jobStatus");
         { progress: Math.floor((processed / files.length) * 100) }
       );
     }
-    console.log("Finalizing archive:", archive);
     await archive.finalize();
 
     // Combine chunks into a single buffer
