@@ -35,6 +35,7 @@ const register = async (req, res, next) => {
  * @param {Object} res - Express response object
  */
 const login = async (req, res, next) => {
+  console.log("login controller called with body:", req.body);
   try {
     const { email, password } = req.body;
 
