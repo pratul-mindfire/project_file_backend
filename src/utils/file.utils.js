@@ -1,16 +1,19 @@
 const multer = require("multer");
-const { UPLOAD_DIR } = require("../config/env");
-const fs = require("fs");
 
-if (!fs.existsSync(UPLOAD_DIR)) {
-  fs.mkdirSync(UPLOAD_DIR);
-}
+// Use memory storage for direct upload to Cloudinary
+const storage = multer.memoryStorage();
+// const { UPLOAD_DIR } = require("../config/env");
+// const fs = require("fs");
 
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => cb(null, UPLOAD_DIR),
-  filename: (req, file, cb) => {
-    cb(null, `${Date.now()}-${file.originalname}`);
-  },
-});
+// if (!fs.existsSync(UPLOAD_DIR)) {
+//   fs.mkdirSync(UPLOAD_DIR);
+// }
+
+// const storage = multer.diskStorage({
+//   destination: (req, file, cb) => cb(null, UPLOAD_DIR),
+//   filename: (req, file, cb) => {
+//     cb(null, `${Date.now()}-${file.originalname}`);
+//   },
+// });
 
 module.exports = multer({ storage });

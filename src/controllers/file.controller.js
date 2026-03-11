@@ -50,7 +50,8 @@ exports.downloadFile = async (req, res, next) => {
 
     res.setHeader("Content-Type", "application/zip");
     res.setHeader("Content-Disposition", `attachment; filename="${file.name}"`);
-    res.download(file.path, file.name);
+    // res.download(file.path, file.name);
+    res.redirect(file.path);
   } catch (err) {
     next(err);
   }

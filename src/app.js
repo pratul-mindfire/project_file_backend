@@ -10,4 +10,5 @@ app.use(passport.initialize());
 app.use(express.json());
 app.use("/api", routes);
 app.use(errorMiddleware);
+
 module.exports = app;

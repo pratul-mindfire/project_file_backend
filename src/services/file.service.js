@@ -1,31 +1,29 @@
 const File = require("../models/File");
 const Project = require("../models/Project");
-const fs = require("fs");
+const { uploadBufferToCloudinary, deleteFromCloudinaryByUrl } = require("../utils/file.upload");
+const cloudinary = require("../config/cloudinary").default;
 
 exports.uploadFiles = async (projectId, files) => {
-  // Verify project ownership
-  const project = await Project.findOne({
-    _id: projectId,
-  });
-
+  const project = await Project.findById(projectId);
   if (!project) {
     const error = new Error("No project found");
     error.status = 404;
     throw error;
   }
-
   const savedFiles = await Promise.all(
-    files.map((file) =>
-      File.create({
+    files.map(async (file) => {
+      // Upload buffer to Cloudinary
+      const result = await uploadBufferToCloudinary(file.buffer, file.originalname);
+      return File.create({
         projectId,
         name: file.originalname,
-        path: file.path,
+        path: result.secure_url, // Store Cloudinary URL
         size: file.size,
         mimeType: file.mimetype,
-      })
-    )
+        resource_type: result.resource_type,
+      });
+    })
   );
-
   return savedFiles;
 };
 
@@ -46,8 +44,10 @@ exports.deleteFile = async (projectId, fileId) => {
     throw error;
   }
 
-  if (fs.existsSync(file.path)) {
-    fs.unlinkSync(file.path);
+  // Extract public_id from Cloudinary URL
+  if (file.path && file.path.includes("cloudinary.com")) {
+    const result = await deleteFromCloudinaryByUrl(file.path, file.resource_type);
+    console.log("Cloudinary deletion result:", result);
   }
 
   await file.deleteOne();
