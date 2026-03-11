@@ -6,7 +6,7 @@ module.exports = (req, res, next) => {
   for (const id of ids) {
     if (!mongoose.Types.ObjectId.isValid(id)) {
       return res.status(400).json({
-        error: "Invalid ID format"
+        error: "Invalid ID format",
       });
     }
   }

@@ -1,56 +1,60 @@
 const express = require("express");
 const router = express.Router();
-const validateObjectId = require("../middlewares/validateObjectId");
 const upload = require("../utils/file.utils");
 
 const projectController = require("../controllers/project.controller");
 const fileController = require("../controllers/file.controller");
 const jobController = require("../controllers/job.controller");
+const authMiddleware = require("../middlewares/auth.middleware");
+const {
+  createProjectValidator,
+  getProjectValidator,
+  updateProjectValidator,
+  deleteProjectValidator,
+} = require("../validators/project.validator");
+
+const { validate } = require("../middlewares/validate.middleware");
+const { projectIdValidator, fileIdValidator } = require("../validators/file.validator");
+const { createJobValidator, jobIdValidator } = require("../validators/job.validator");
+
+// Apply authentication middleware to all project routes
+router.use(authMiddleware);
 
 /* Project APIs */
-router.post("/projects", projectController.createProject);
-router.get("/projects/:projectId", validateObjectId, projectController.getProject);
-router.get("/projects", projectController.getAllProject);
-router.put("/projects/:projectId", validateObjectId, projectController.updateProject);
-router.delete("/projects/:projectId", validateObjectId, projectController.deleteProject);
-
+router.post("/", createProjectValidator, validate, projectController.createProject);
+router.get("/:projectId", getProjectValidator, validate, projectController.getProject);
+router.get("/", projectController.getProjects);
+router.put("/:projectId", updateProjectValidator, validate, projectController.updateProject);
+router.delete("/:projectId", deleteProjectValidator, validate, projectController.deleteProject);
 /* File APIs */
 router.post(
-  "/projects/:projectId/files",
-  validateObjectId,
+  "/:projectId/files",
+  projectIdValidator,
+  validate,
   upload.array("files"),
   fileController.uploadFiles
 );
 
-router.get(
-  "/projects/:projectId/files",
-  validateObjectId,
-  fileController.listFiles
-);
+router.get("/:projectId/files", projectIdValidator, validate, fileController.getProjectFiles);
 
-router.delete(
-  "/projects/:projectId/files/:fileId",
-  validateObjectId,
-  fileController.deleteFile
-);
+router.delete("/:projectId/files/:fileId", fileIdValidator, validate, fileController.deleteFile);
 
 router.get(
-  "/projects/:projectId/files/:fileId/download",
-  validateObjectId,
+  "/:projectId/files/:fileId/download",
+  [...projectIdValidator, ...fileIdValidator],
+  validate,
   fileController.downloadFile
 );
 
 /* Job APIs */
-router.post(
-  "/projects/:projectId/jobs/zip",
-  validateObjectId,
-  jobController.createZipJob
-);
+router.post("/:projectId/jobs/zip", createJobValidator, validate, jobController.createJob);
 
 router.get(
-  "/projects/:projectId/jobs/:jobId",
-  validateObjectId,
-  jobController.getJobStatus
+  "/:projectId/jobs/:jobId",
+  [...projectIdValidator, ...jobIdValidator],
+  validate,
+  jobController.getJob
 );
+router.get("/:projectId/jobs", projectIdValidator, validate, jobController.getJobs);
 
 module.exports = router;

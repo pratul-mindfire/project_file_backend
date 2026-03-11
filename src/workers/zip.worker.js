@@ -19,7 +19,7 @@ const jobStatus = require("../constants/jobStatus");
       { _id: jobId },
       {
         status: jobStatus.PROCESSING,
-        startedAt: new Date()
+        startedAt: new Date(),
       }
     );
 
@@ -28,11 +28,13 @@ const jobStatus = require("../constants/jobStatus");
     const outputFileName = `${jobId}_files.zip`;
     const archive = archiver("zip", { zlib: { level: 9 } });
     const chunks = [];
-    archive.on("data", chunk => chunks.push(chunk));
+    archive.on("data", (chunk) => chunks.push(chunk));
 
     let processed = 0;
+    console.log("Files to process:", files);
     for (const file of files) {
       // Download file from Cloudinary
+      console.log("Downloading file from Cloudinary:", file.path);
       const response = await axios.get(file.path, { responseType: "arraybuffer" });
       archive.append(response.data, { name: file.name });
       processed++;
@@ -41,6 +43,7 @@ const jobStatus = require("../constants/jobStatus");
         { progress: Math.floor((processed / files.length) * 100) }
       );
     }
+    console.log("Finalizing archive:", archive);
     await archive.finalize();
 
     // Combine chunks into a single buffer
@@ -55,7 +58,7 @@ const jobStatus = require("../constants/jobStatus");
       size: zipBuffer.length,
       mimeType: "application/zip",
       isOutput: true,
-      resource_type: result.resource_type
+      resource_type: result.resource_type,
     });
     await Job.updateOne(
       { _id: jobId },
@@ -63,18 +66,17 @@ const jobStatus = require("../constants/jobStatus");
         status: jobStatus.COMPLETED,
         progress: 100,
         outputFileId: outputFile._id,
-        completedAt: new Date()
+        completedAt: new Date(),
       }
     );
 
     parentPort.postMessage("done");
-
   } catch (err) {
     await Job.updateOne(
       { _id: jobId },
       {
         status: jobStatus.FAILED,
-        error: err.message
+        error: err.message,
       }
     );
   }

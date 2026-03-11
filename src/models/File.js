@@ -6,7 +6,7 @@ const schema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "Project",
       required: true,
-      index: true
+      index: true,
     },
     name: String,
     path: String,
@@ -14,7 +14,7 @@ const schema = new mongoose.Schema(
     resource_type: String,
     size: Number,
     checksum: String,
-    isOutput: { type: Boolean, default: false }
+    isOutput: { type: Boolean, default: false },
   },
   { timestamps: true }
 );

@@ -1,9 +1,21 @@
 const projectService = require("../services/project.service");
 
 exports.createProject = async (req, res, next) => {
+  const { name, description } = req.body;
+  // Validate required fields
+  if (!name) {
+    return res.status(400).json({
+      success: false,
+      message: "Project name is required",
+    });
+  }
   try {
-    const project = await projectService.createProject(req.body);
-    res.status(201).json(project);
+    const project = await projectService.createProject(req.user.userId, name, description);
+    res.status(201).json({
+      success: true,
+      message: "Project created successfully",
+      data: project,
+    });
   } catch (err) {
     next(err);
   }
@@ -11,16 +23,24 @@ exports.createProject = async (req, res, next) => {
 
 exports.getProject = async (req, res, next) => {
   try {
-    const project = await projectService.getProject(req.params.projectId);
-    res.json(project);
+    const project = await projectService.getProject(req.user.userId, req.params.projectId);
+    res.status(201).json({
+      success: true,
+      message: "Project retrieved successfully",
+      data: project,
+    });
   } catch (err) {
     next(err);
   }
 };
-exports.getAllProject = async (req, res, next) => {
+exports.getProjects = async (req, res, next) => {
   try {
-    const project = await projectService.getAllProject();
-    res.json(project);
+    const projects = await projectService.getProjects(req.user.userId);
+    res.status(201).json({
+      success: true,
+      message: "Projects retrieved successfully",
+      data: projects,
+    });
   } catch (err) {
     next(err);
   }
@@ -28,8 +48,16 @@ exports.getAllProject = async (req, res, next) => {
 
 exports.updateProject = async (req, res, next) => {
   try {
-    await projectService.updateProject(req.params.projectId, req.body);
-    res.json({ message: "Project updated successfully" });
+    const project = await projectService.updateProject(
+      req.user.userId,
+      req.params.projectId,
+      req.body
+    );
+    res.status(201).json({
+      success: true,
+      message: "Project updated successfully",
+      data: project,
+    });
   } catch (err) {
     next(err);
   }
@@ -37,8 +65,11 @@ exports.updateProject = async (req, res, next) => {
 
 exports.deleteProject = async (req, res, next) => {
   try {
-    await projectService.deleteProject(req.params.projectId);
-    res.json({ message: "Project and related data deleted" });
+    await projectService.deleteProject(req.user.userId, req.params.projectId);
+    res.status(201).json({
+      success: true,
+      message: "Project and related data deleted successfully",
+    });
   } catch (err) {
     next(err);
   }
